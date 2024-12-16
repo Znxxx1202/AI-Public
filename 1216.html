@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>全屏幻灯片示例</title>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+       .slider-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            transition: transform 0.5s ease;
+        }
+
+       .slide {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            text-align: center;
+        }
+
+       .slide.pink {
+            background-color: pink;
+        }
+
+       .slide.skyblue {
+            background-color: skyblue;
+        }
+
+       .slide.yellow {
+            background-color: yellow;
+        }
+
+       .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="slider" class="slider-container">
+        <div class="slide pink">粉红色</div>
+        <div class="slide skyblue hidden">天蓝色</div>
+        <div class="slide yellow hidden">鹅黄色</div>
+    </div>
+
+    <script>
+        // 当前幻灯片索引，初始化为0，表示显示第一张幻灯片
+        let currentSlide = 0;
+        // 获取所有幻灯片元素
+        const slides = document.querySelectorAll('.slide');
+        // 计算幻灯片总数
+        const totalSlides = slides.length;
+
+        // 跳转到指定索引的幻灯片函数
+        function goToSlide(index) {
+            // 处理索引越界情况，循环切换幻灯片
+            index = (index + totalSlides) % totalSlides;
+
+            // 隐藏所有幻灯片
+            slides.forEach(slide => slide.classList.add('hidden'));
+
+            // 显示当前要展示的幻灯片
+            slides[index].classList.remove('hidden');
+
+            // 更新当前幻灯片索引
+            currentSlide = index;
+        }
+
+        let yStartPos = 0;
+        let yEndPos = 0;
+
+        // 添加触摸开始事件监听器
+        window.addEventListener('touchstart', handleTouchStart, false);
+        // 添加触摸移动事件监听器
+        window.addEventListener('touchmove', handleTouchMove, false);
+        // 添加触摸结束事件监听器
+        window.addEventListener('touchend', handleTouchEnd, false);
+
+        // 触摸开始时记录起始位置的函数
+        function handleTouchStart(event) {
+            yStartPos = event.touches[0].clientY;
+        }
+
+        // 触摸移动时记录结束位置的函数
+        function handleTouchMove(event) {
+            yEndPos = event.touches[0].clientY;
+        }
+
+        // 触摸结束后根据滑动方向切换幻灯片的函数
+        function handleTouchEnd(event) {
+            if (yStartPos > yEndPos) { // 手指向上滑动，切换到下一张幻灯片
+                goToSlide(currentSlide + 1);
+            } else if (yStartPos < yEndPos) { // 手指向下滑动，切换到上一张幻灯片
+                goToSlide(currentSlide - 1);
+            }
+            // 重置触摸位置
+            yStartPos = 0;
+            yEndPos = 0;
+        }
+
+        // 初始化，显示第一个幻灯片
+        goToSlide(0);
+    </script>
+</body>
+
+</html>
